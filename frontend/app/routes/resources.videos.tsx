@@ -5,6 +5,7 @@ import { DescriptionList } from "~/components/custom/DescriptionList";
 import { getDescriptions } from "~/services/get-descriptions.server";
 import { updateDescription } from "~/services/update-description.server";
 import { deleteDescription } from "~/services/delete-description.server";
+import type { ShouldRevalidateFunction } from "@remix-run/react";
 
 export async function loader() {
   const data = await getDescriptions();
@@ -23,12 +24,17 @@ export async function action({ request }: ActionFunctionArgs) {
       return json({ data: data, message: "Updated!" });
     case "delete":
       data = await deleteDescription(formItems.videoId as string);
+    case "chat":
       return json({ data: { description: data, videoId: formItems.videoId } });
-
     default:
       return json({ data: null, message: "No action found!" });
   }
 }
+
+export const shouldRevalidate: ShouldRevalidateFunction = ({ formData }) => {
+  if (formData?.get("_action") === "chat") return false;
+  else return true;
+};
 
 export function DescriptionListLoader() {
   const fetcher = useFetcher();

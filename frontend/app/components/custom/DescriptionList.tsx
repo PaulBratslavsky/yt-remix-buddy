@@ -1,7 +1,8 @@
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useNavigation, Link } from "@remix-run/react";
 import { TextareaCustom } from "~/components/custom/TextareaCustom";
 import { Spinner } from "~/components/custom/Spinner";
 import { TrashIcon } from "~/components/icons/TrashIcon";
+import { ChatIcon } from "~/components/icons/ChatIcon";
 import YouTubePlayer from "~/components/custom/YouTubePlayer";
 
 import {
@@ -25,6 +26,7 @@ export function DescriptionList({ data }: { readonly data: any }) {
 
 function DescriptionCard({ item }: { readonly item: any }) {
   const fetcher = useFetcher();
+  const navigation = useNavigation();
   const isUpdating = fetcher.formData?.get("_action") === "update";
   const isDeleting = fetcher.formData?.get("_action") === "delete";
 
@@ -35,12 +37,7 @@ function DescriptionCard({ item }: { readonly item: any }) {
       </CardHeader>
       <CardContent>
         <div className="mb-6">
-          <YouTubePlayer
-            key={item.id}
-            playerKey={item.id}
-            id={item.videoId}
-            // className="-my-5.75 sticky top-5 z-50"
-          />
+          <YouTubePlayer key={item.id} playerKey={item.id} id={item.videoId} />
         </div>
 
         <div>
@@ -77,7 +74,13 @@ function DescriptionCard({ item }: { readonly item: any }) {
           </fetcher.Form>
         </div>
       </CardContent>
-      <CardFooter></CardFooter>
+      <CardFooter>
+        <Link to={`/dashboard/chat/${item.videoId}`}>
+          <Button className="absolute right-20 top-4 bg-violet-600 hover:bg-violet-500">
+            <ChatIcon className="w-4 h-4" />
+          </Button>
+        </Link>
+      </CardFooter>
     </Card>
   );
 }
