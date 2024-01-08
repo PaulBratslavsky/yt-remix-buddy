@@ -1,4 +1,4 @@
-export function ChatIcon({ className }: { className?: string }) {
+export function ChatIcon({ className }: { readonly className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

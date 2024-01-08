@@ -33,7 +33,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({ formData }) => {
   if (formData?.get("_action") === "chat") return false;
-  else return true;
+  if (formData?.get("_action") === "bookmark") return false;
+  return true;
 };
 
 export function DescriptionListLoader() {
