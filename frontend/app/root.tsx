@@ -57,7 +57,7 @@ export default function App() {
       </head>
       <body>
         <main className="min-h-screen p-24 max-w-[960px] mx-auto grid">
-          
+       
           <Outlet />
         </main>
         <Toaster />

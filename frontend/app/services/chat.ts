@@ -2,7 +2,7 @@ import { MemoryVectorStore } from "langchain/vectorstores/memory";
 import { OpenAIEmbeddings, ChatOpenAI } from "@langchain/openai";
 import { ConversationalRetrievalQAChain } from "langchain/chains";
 import { CharacterTextSplitter } from "langchain/text_splitter";
-import { YoutubeTranscript } from "youtube-transcript";
+import { fetchTranscript } from "~/lib/youtube-transcript";
 
 const openAIApiKey = process.env.OPEN_AI_API_KEY;
 
@@ -23,7 +23,7 @@ export async function chat(videoId: string, query: string) {
   const embeddings = new OpenAIEmbeddings(embeddingsConfig);
   const llm = new ChatOpenAI(chatConfig);
 
-  const transcript = await getTranscript(videoId);
+  const transcript = await fetchTranscript(videoId);
   const transformed = transformData(transcript);
   const processed = await splitText(transformed.text, videoId);
 
@@ -55,14 +55,6 @@ function transformData(data: any) {
   };
 }
 
-async function getTranscript(id: any) {
-  try {
-    const response = await YoutubeTranscript.fetchTranscript(id);
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 async function splitText(text: any, videoId: any) {
   const splitter = new CharacterTextSplitter({
@@ -100,6 +92,7 @@ async function chatWithData(query: string, model: any, vectorStore: any) {
     );
 
     const response = await chain.call({ question: query, chat_history: [] });
+    console.log(response);
     return response;
   } catch (error) {
     console.log(error);

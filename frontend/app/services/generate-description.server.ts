@@ -1,7 +1,7 @@
 import { OpenAI } from "@langchain/openai";
 import { PromptTemplate } from "langchain/prompts";
 import { LLMChain, SimpleSequentialChain } from "langchain/chains";
-import { YoutubeTranscript } from "youtube-transcript";
+import { fetchTranscript } from "~/lib/youtube-transcript";
 import { transformData } from "~/lib/utils";
 
 interface InitializeModelProps {
@@ -20,10 +20,6 @@ async function initializeModel({ openAIApiKey, model, temp }: InitializeModelPro
   });
 }
 
-async function getTranscript(id: string) {
-  const response = await YoutubeTranscript.fetchTranscript(id);
-  return response;
-}
 
 export async function generateDescription(videoId: string) {
 
@@ -51,7 +47,7 @@ export async function generateDescription(videoId: string) {
     // verbose: true,
   });
 
-  const data = await getTranscript( videoId);
+  const data = await fetchTranscript( videoId);
   const transformedData = transformData(data);
   const response = await overall_chain.run(transformedData.text);
   

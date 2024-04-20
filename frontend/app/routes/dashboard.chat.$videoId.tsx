@@ -5,7 +5,7 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { chat } from "~/services/chat";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { PencilIcon } from "~/components/icons/PencilIcon";
 import { CancelIcon } from "~/components/icons/CancelIcon";
 import { BookMarkIcon } from "~/components/icons/BookMarkIcon";
@@ -39,9 +39,18 @@ export default function ChatRoute() {
   const isSaving = fetcher.formData?.get("_action") === "bookmark";
 
   const data = fetcher.data;
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    setText(data?.data);
+    if (data) {
+      setText((prevState) => prevState.concat("\n \n" + data?.data));
+      // Scroll the textarea to the bottom every time the text changes
+
+      // why you are not working
+      if (textareaRef.current) {
+        textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+      }
+    }
   }, [data]);
 
   return (
@@ -84,8 +93,9 @@ export default function ChatRoute() {
               <Textarea
                 name="content"
                 className="w-full h-[400px] mt-4"
-                defaultValue={text}
+                value={text}
                 disabled={!edit}
+                ref={textareaRef}
               />
             </fieldset>
           </fetcher.Form>
@@ -101,7 +111,7 @@ export default function ChatRoute() {
               className="w-full"
               required
             />
-            <Button name="_action" value="chat" type="submit" >
+            <Button name="_action" value="chat" type="submit">
               {isSubmitting ? "Sending..." : "Send"}
             </Button>
             {text && (
